@@ -30,18 +30,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    // http状态码均为200，返回错误信息实体
-
     /**
      * 自定义异常处理
-     *
-     * @param req request
-     * @param ex  exception
-     * @return 响应
      */
     @ExceptionHandler(value = BaseException.class)
     public Result baseExceptionHandler(HttpServletRequest req, BaseException ex) {
-        logger.error("请求接口 [{}] 发生错误，错误信息：{}", req.getRequestURI(), ex.getLocalizedMessage());
+        logger.error("请求接口 [{}] 失败，错误信息：{}", req.getRequestURI(), ex.getLocalizedMessage());
         return ResultFactory.wrapper(ex);
     }
 
@@ -65,9 +59,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 未知异常处理
-     *
-     * @param ex exception
-     * @return 响应
      */
     @ExceptionHandler(value = Exception.class)
     public Result exceptionHandler(Exception ex) {
@@ -75,14 +66,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResultFactory.wrapper(ResultCode.FAIL);
     }
 
-
-    // http状态码均为500，不返回实体
-
     /**
      * 服务器内部错误 500
-     *
-     * @param req request
-     * @param ex  exception
      */
     @ExceptionHandler(value = RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -94,9 +79,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 未授权 401
-     *
-     * @param req req
-     * @param ex  ex
      */
     @ExceptionHandler(value = AccessDeniedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -107,14 +89,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 上传异常，406
-     *
-     * @param req request
-     * @param ex  exception
      */
     @ExceptionHandler(value = UploadException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public void uploadExceptionHandler(HttpServletRequest req, HttpServletResponse response, UploadException ex) throws IOException {
-        logger.error("上传接口 [{}] 发生错误，错误信息：{}", req.getRequestURI(), ex.getLocalizedMessage());
+        logger.error("上传接口 [{}] 失败，信息：{}", req.getRequestURI(), ex.getLocalizedMessage());
         response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
     }
 }
