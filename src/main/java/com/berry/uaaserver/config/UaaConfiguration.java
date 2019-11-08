@@ -13,8 +13,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -109,7 +107,6 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
     }
 
     private final UaaProperties uaaProperties;
-    private final PasswordEncoder passwordEncoder;
 
 
     private final RedisConnectionFactory redisConnectionFactory;
@@ -117,9 +114,8 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
     @Resource
     private DataSource dataSource;
 
-    public UaaConfiguration(UaaProperties uaaProperties, PasswordEncoder passwordEncoder, RedisConnectionFactory redisConnectionFactory) {
+    public UaaConfiguration(UaaProperties uaaProperties, RedisConnectionFactory redisConnectionFactory) {
         this.uaaProperties = uaaProperties;
-        this.passwordEncoder = passwordEncoder;
         this.redisConnectionFactory = redisConnectionFactory;
     }
 
