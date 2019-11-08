@@ -43,10 +43,6 @@ import java.util.Collection;
 @Configuration
 @EnableAuthorizationServer
 public class UaaConfiguration extends AuthorizationServerConfigurerAdapter implements ApplicationContextAware {
-    /**
-     * Access tokens will not expire any earlier than this.
-     */
-    private static final int MIN_ACCESS_TOKEN_VALIDITY_SECS = 60;
 
     private static final String DEMO_RESOURCE_ID = "order";
 
