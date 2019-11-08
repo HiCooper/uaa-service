@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author Berry_Cooper.
@@ -69,34 +71,50 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = Exception.class)
     public Result exceptionHandler(Exception ex) {
-        logger.error("系统异常:{}", ex.toString());
+        logger.error("系统异常:{}", ex.getLocalizedMessage());
         return ResultFactory.wrapper(ResultCode.FAIL);
     }
 
-    /**
-     * 上传异常，比如返回非200状态码
-     *
-     * @param req request
-     * @param ex  exception
-     */
-    @ExceptionHandler(value = UploadException.class)
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-    public Result uploadExceptionHandler(HttpServletRequest req, UploadException ex) {
-        logger.error("上传接口 [{}] 发生错误，错误信息：{}", req.getRequestURI(), ex.toString());
-        return ResultFactory.wrapper(ex);
-    }
 
     // http状态码均为500，不返回实体
 
     /**
-     * 500-服务器内部错误
+     * 服务器内部错误 500
      *
      * @param req request
      * @param ex  exception
      */
     @ExceptionHandler(value = RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void runtimeExceptionHandler(HttpServletRequest req, RuntimeException ex) {
-        logger.error("接口 [{}] 内部错误:{},位置：{}", req.getRequestURI(), ex.toString(), ex.getStackTrace()[0]);
+    public void runtimeExceptionHandler(HttpServletRequest req, HttpServletResponse response, RuntimeException ex) throws IOException {
+        logger.error("接口 [{}] 内部错误:{},位置：{}", req.getRequestURI(), ex.getLocalizedMessage(), ex.getStackTrace()[0]);
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+
+
+    /**
+     * 未授权 401
+     *
+     * @param req req
+     * @param ex  ex
+     */
+    @ExceptionHandler(value = AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void accessDeniedExceptionHandler(HttpServletRequest req, HttpServletResponse response) throws IOException {
+        logger.error("IP:[{}] 请求接口 [{}] 失败，未授权访问", req.getRemoteHost(), req.getRequestURI());
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
+    /**
+     * 上传异常，406
+     *
+     * @param req request
+     * @param ex  exception
+     */
+    @ExceptionHandler(value = UploadException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public void uploadExceptionHandler(HttpServletRequest req, HttpServletResponse response, UploadException ex) throws IOException {
+        logger.error("上传接口 [{}] 发生错误，错误信息：{}", req.getRequestURI(), ex.getLocalizedMessage());
+        response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
     }
 }

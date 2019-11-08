@@ -1,7 +1,6 @@
 package com.berry.uaaserver.config;
 
 import com.berry.uaaserver.security.AuthoritiesConstants;
-import io.github.jhipster.config.JHipsterProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,9 +9,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -22,16 +23,21 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +50,8 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
      */
     private static final int MIN_ACCESS_TOKEN_VALIDITY_SECS = 60;
 
+    private static final String DEMO_RESOURCE_ID = "order";
+
     private ApplicationContext applicationContext;
 
     @Override
@@ -51,18 +59,16 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
         this.applicationContext = applicationContext;
     }
 
+    @Configuration
     @EnableResourceServer
     public static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
         private final TokenStore tokenStore;
 
-        private final JHipsterProperties jHipsterProperties;
-
         private final CorsFilter corsFilter;
 
-        public ResourceServerConfiguration(TokenStore tokenStore, JHipsterProperties jHipsterProperties, CorsFilter corsFilter) {
+        ResourceServerConfiguration(TokenStore tokenStore, CorsFilter corsFilter) {
             this.tokenStore = tokenStore;
-            this.jHipsterProperties = jHipsterProperties;
             this.corsFilter = corsFilter;
         }
 
@@ -98,64 +104,38 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
 
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-            resources.resourceId("jhipster-uaa").tokenStore(tokenStore);
+            resources.resourceId(DEMO_RESOURCE_ID).tokenStore(tokenStore);
         }
     }
 
-    private final JHipsterProperties jHipsterProperties;
-
     private final UaaProperties uaaProperties;
-
     private final PasswordEncoder passwordEncoder;
 
-    public UaaConfiguration(JHipsterProperties jHipsterProperties, UaaProperties uaaProperties, PasswordEncoder passwordEncoder) {
-        this.jHipsterProperties = jHipsterProperties;
+
+    private final RedisConnectionFactory redisConnectionFactory;
+
+    @Resource
+    private DataSource dataSource;
+
+    public UaaConfiguration(UaaProperties uaaProperties, PasswordEncoder passwordEncoder, RedisConnectionFactory redisConnectionFactory) {
         this.uaaProperties = uaaProperties;
         this.passwordEncoder = passwordEncoder;
+        this.redisConnectionFactory = redisConnectionFactory;
+    }
+
+    @Bean
+    public ClientDetailsService clientDetails() {
+        return new JdbcClientDetailsService(dataSource);
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        int accessTokenValidity = uaaProperties.getWebClientConfiguration().getAccessTokenValidityInSeconds();
-        accessTokenValidity = Math.max(accessTokenValidity, MIN_ACCESS_TOKEN_VALIDITY_SECS);
-        int refreshTokenValidity = uaaProperties.getWebClientConfiguration().getRefreshTokenValidityInSecondsForRememberMe();
-        refreshTokenValidity = Math.max(refreshTokenValidity, accessTokenValidity);
-        /*
-        For a better client design, this should be done by a ClientDetailsService (similar to UserDetailsService).
-         */
-        clients.inMemory()
-                .withClient(uaaProperties.getWebClientConfiguration().getClientId())
-                .secret(passwordEncoder.encode(uaaProperties.getWebClientConfiguration().getSecret()))
-                .scopes("openid")
-                .autoApprove(true)
-                .authorizedGrantTypes("implicit", "refresh_token", "password", "authorization_code")
-                .accessTokenValiditySeconds(accessTokenValidity)
-                .refreshTokenValiditySeconds(refreshTokenValidity)
-                .and()
-                .withClient(jHipsterProperties.getSecurity().getClientAuthorization().getClientId())
-                .secret(passwordEncoder.encode(jHipsterProperties.getSecurity().getClientAuthorization().getClientSecret()))
-                .scopes("web-app")
-                .authorities("ROLE_ADMIN")
-                .autoApprove(true)
-                .authorizedGrantTypes("client_credentials")
-                .accessTokenValiditySeconds((int) jHipsterProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSeconds())
-                .refreshTokenValiditySeconds((int) jHipsterProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSecondsForRememberMe());
+        clients.withClientDetails(clientDetails());
     }
 
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        //pick up all  TokenEnhancers incl. those defined in the application
-        //this avoids changes to this class if an application wants to add its own to the chain
-        Collection<TokenEnhancer> tokenEnhancers = applicationContext.getBeansOfType(TokenEnhancer.class).values();
-        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(new ArrayList<>(tokenEnhancers));
-        endpoints
-                .authenticationManager(authenticationManager)
-                .tokenStore(tokenStore())
-                .tokenEnhancer(tokenEnhancerChain)
-                .reuseRefreshTokens(false);
-    }
-
+    /**
+     * 注入AuthenticationManager ，密码模式用到
+     */
     @Autowired
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
@@ -166,8 +146,8 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
      * @return the {@link JwtTokenStore} managing the tokens.
      */
     @Bean
-    public JwtTokenStore tokenStore() {
-        return new JwtTokenStore(jwtAccessTokenConverter());
+    public RedisTokenStore tokenStore() {
+        return new RedisTokenStore(redisConnectionFactory);
     }
 
     /**
@@ -187,9 +167,25 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
     }
 
     @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        //pick up all  TokenEnhancers incl. those defined in the application
+        //this avoids changes to this class if an application wants to add its own to the chain
+        Collection<TokenEnhancer> tokenEnhancers = applicationContext.getBeansOfType(TokenEnhancer.class).values();
+        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+        tokenEnhancerChain.setTokenEnhancers(new ArrayList<>(tokenEnhancers));
+        endpoints
+                .authenticationManager(authenticationManager)
+                .tokenStore(tokenStore())
+                .accessTokenConverter(jwtAccessTokenConverter())
+                .tokenEnhancer(tokenEnhancerChain)
+                .reuseRefreshTokens(false);
+    }
+
+    @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
         oauthServer
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()");
+                .checkTokenAccess("isAuthenticated()")
+                .allowFormAuthenticationForClients();
     }
 }

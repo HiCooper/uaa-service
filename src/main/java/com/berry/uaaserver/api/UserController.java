@@ -1,11 +1,8 @@
 package com.berry.uaaserver.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,34 +15,60 @@ import org.springframework.web.bind.annotation.RestController;
  * Use：
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/resources")
 public class UserController {
 
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
-
     /**
-     * 商品查询 不做限制
+     * 需要用户角色权限
      *
-     * @param id
      * @return
      */
-    @GetMapping("/product/{id}")
-    public String getProduct(@PathVariable String id) {
-        //for debug
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return "product id : " + id;
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping(value = "user")
+    public String helloUser() {
+        return "hello user";
     }
 
     /**
-     * 订单查询 访问控制
+     * 需要管理角色权限
      *
-     * @param id
      * @return
      */
-    @GetMapping("/order/{id}")
-    public String getOrder(@PathVariable String id) {
-        //for debug
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return "order id : " + id;
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("admin")
+    public String helloAdmin() {
+        return "hello admin";
+    }
+
+    /**
+     * 需要客户端权限
+     *
+     * @return
+     */
+    @PreAuthorize("hasRole('ROLE_CLIENT')")
+    @GetMapping(value = "client")
+    public String helloClient() {
+        return "hello user authenticated by normal client";
+    }
+
+    /**
+     * 需要受信任的客户端权限
+     *
+     * @return
+     */
+    @PreAuthorize("hasRole('ROLE_TRUSTED_CLIENT')")
+    @GetMapping(value = "trusted_client")
+    public String helloTrustedClient() {
+        return "hello user authenticated by trusted client";
+    }
+
+    @GetMapping(value = "principal")
+    public Object getPrincipal() {
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    @GetMapping(value = "roles")
+    public Object getRoles() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities();
     }
 }
