@@ -37,7 +37,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: com.berry.uaaserver.dao.entity
+  typeAliasesPackage: com.berry.authserver.dao.entity
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
@@ -58,17 +58,6 @@ uaa:
     name: keystore.p12
     password: password
     alias: selfsigned
-
-security:
-  oauth2:
-    client:
-      access-token-uri: http://localhost:9080/auth/realms/jhipster/protocol/openid-connect/token
-      user-authorization-uri: http://localhost:9080/auth/realms/jhipster/protocol/openid-connect/auth
-      client-id: web_app
-      client-secret: web_app
-      scope: openid profile email
-    resource:
-      user-info-uri: http://localhost:9080/auth/realms/jhipster/protocol/openid-connect/userinfo
 
 management:
   endpoint:
