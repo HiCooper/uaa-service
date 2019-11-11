@@ -19,12 +19,11 @@ public class UaaProperties {
      * Keystore configuration for signing and verifying JWT tokens.
      */
     public static class KeyStore {
-        //name of the keystore in the classpath
-        private String name = "keystore.p12";
+        private String name = "keystore.jks";
         //password used to access the key
-        private String password = "password";
+        private String password = "berry123";
         //name of the alias to fetch
-        private String alias = "selfsigned";
+        private String alias = "keystore";
 
         public String getName() {
             return name;

@@ -55,9 +55,9 @@ jhipster:
 
 uaa:
   key-store:
-    name: keystore.p12
-    password: password
-    alias: selfsigned
+    name: keystore.jks
+    password: berry123
+    alias: keystore
 
 management:
   endpoint:
