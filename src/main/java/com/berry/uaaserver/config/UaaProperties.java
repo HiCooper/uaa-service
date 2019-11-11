@@ -15,12 +15,6 @@ public class UaaProperties {
         return keyStore;
     }
 
-    private WebClientConfiguration webClientConfiguration = new WebClientConfiguration();
-
-    public WebClientConfiguration getWebClientConfiguration() {
-        return webClientConfiguration;
-    }
-
     /**
      * Keystore configuration for signing and verifying JWT tokens.
      */
@@ -54,47 +48,6 @@ public class UaaProperties {
 
         public void setAlias(String alias) {
             this.alias = alias;
-        }
-    }
-
-    public static class WebClientConfiguration {
-        //validity of the short-lived access token in secs (min: 60), don't make it too long
-        private int accessTokenValidityInSeconds = 5 * 60;
-        //validity of the refresh token in secs (defines the duration of "remember me")
-        private int refreshTokenValidityInSecondsForRememberMe = 7 * 24 * 60 * 60;
-        private String clientId = "web_app";
-        private String secret = "changeit";
-
-        public int getAccessTokenValidityInSeconds() {
-            return accessTokenValidityInSeconds;
-        }
-
-        public void setAccessTokenValidityInSeconds(int accessTokenValidityInSeconds) {
-            this.accessTokenValidityInSeconds = accessTokenValidityInSeconds;
-        }
-
-        public int getRefreshTokenValidityInSecondsForRememberMe() {
-            return refreshTokenValidityInSecondsForRememberMe;
-        }
-
-        public void setRefreshTokenValidityInSecondsForRememberMe(int refreshTokenValidityInSecondsForRememberMe) {
-            this.refreshTokenValidityInSecondsForRememberMe = refreshTokenValidityInSecondsForRememberMe;
-        }
-
-        public String getClientId() {
-            return clientId;
-        }
-
-        public void setClientId(String clientId) {
-            this.clientId = clientId;
-        }
-
-        public String getSecret() {
-            return secret;
-        }
-
-        public void setSecret(String secret) {
-            this.secret = secret;
         }
     }
 }

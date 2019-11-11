@@ -52,23 +52,12 @@ jhipster:
     exposed-headers: 'Authorization,Link,X-Total-Count'
     allow-credentials: true
     max-age: 1800
-  security:
-    client-authorization:
-      client-id: internal
-      client-secret: internal
 
 uaa:
   key-store:
     name: keystore.p12
     password: password
     alias: selfsigned
-  web-client-configuration:
-    # Access Token is valid for 5 mins
-    access-token-validity-in-seconds: 300
-    # Refresh Token is valid for 7 days
-    refresh-token-validity-in-seconds-for-remember-me: 604800
-    client-id: web_app
-    secret: changeit
 
 security:
   oauth2:

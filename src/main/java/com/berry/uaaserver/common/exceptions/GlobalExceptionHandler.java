@@ -24,8 +24,8 @@ import java.io.IOException;
  * @date 2018-03-26
  * Description 全局统一异常处理
  */
-@ControllerAdvice
-@ResponseBody
+//@ControllerAdvice
+//@ResponseBody
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
