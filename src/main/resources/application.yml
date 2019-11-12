@@ -13,6 +13,7 @@ spring:
   mvc:
     favicon:
       enabled: false
+    throw-exception-if-no-handler-found: true
   jackson:
     # 输出时间为 时间戳
     #    serialization:
@@ -31,7 +32,10 @@ spring:
       thread-name-prefix: auth-scheduling-
       pool:
         size: 2
-
+  thymeleaf:
+    prefix: classpath:/static/
+    suffix: .html
+    cache: false
 
 #mybatis
 mybatis-plus:

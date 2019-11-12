@@ -39,6 +39,9 @@ import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * UAA 授权配置和资源服务配置
+ */
 @Configuration
 @EnableAuthorizationServer
 public class UaaConfiguration extends AuthorizationServerConfigurerAdapter implements ApplicationContextAware {
@@ -100,9 +103,9 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
                     .antMatchers("/api/authenticate").permitAll()
                     .antMatchers("/api/account/reset-password/init").permitAll()
                     .antMatchers("/api/account/reset-password/finish").permitAll()
+                    .antMatchers("/api/management/health").permitAll()
+                    .antMatchers("/api/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
                     .antMatchers("/api/**").authenticated()
-                    .antMatchers("/management/health").permitAll()
-                    .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
                     .antMatchers("/v2/api-docs/**").permitAll()
                     .antMatchers("/swagger-resources/configuration/ui").permitAll()
                     .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN);

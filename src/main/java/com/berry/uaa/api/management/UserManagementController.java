@@ -21,38 +21,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/management/user")
 @Api(tags = "用户管理")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class UserManagementController {
 
     @ApiOperation("分页获取用户列表")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/page_list")
     public Result pageListUser() {
         return ResultFactory.wrapper();
     }
 
     @ApiOperation("用户详情")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/detail")
     public Result detailUser() {
         return ResultFactory.wrapper();
     }
 
     @ApiOperation("创建用户")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/create")
     public Result createUser() {
         return ResultFactory.wrapper();
     }
 
     @ApiOperation("删除用户")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/delete")
     public Result deleteUser() {
         return ResultFactory.wrapper();
     }
 
     @ApiOperation("编辑用户信息")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/edit")
     public Result editUser() {
         return ResultFactory.wrapper();

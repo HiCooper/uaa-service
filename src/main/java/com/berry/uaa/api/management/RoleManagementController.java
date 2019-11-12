@@ -21,38 +21,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/management/role")
 @Api(tags = "角色管理")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class RoleManagementController {
 
     @ApiOperation("获取角色列表")
-    @PreAuthorize("hasRole('ROLE_INNER_SERVICE')")
     @PostMapping(value = "/list")
     public Result listRole() {
         return ResultFactory.wrapper();
     }
 
     @ApiOperation("角色详情")
-    @PreAuthorize("hasRole('ROLE_INNER_SERVICE')")
     @GetMapping(value = "/detail")
     public Result detailRole() {
         return ResultFactory.wrapper();
     }
 
     @ApiOperation("创建角色")
-    @PreAuthorize("hasRole('ROLE_INNER_SERVICE')")
     @PostMapping(value = "/create")
     public Result createRole() {
         return ResultFactory.wrapper();
     }
 
     @ApiOperation("删除角色")
-    @PreAuthorize("hasRole('ROLE_INNER_SERVICE')")
     @PostMapping(value = "/delete")
     public Result deleteRole() {
         return ResultFactory.wrapper();
     }
 
     @ApiOperation("修改角色")
-    @PreAuthorize("hasRole('ROLE_INNER_SERVICE')")
     @PostMapping(value = "/edit")
     public Result editRole() {
         return ResultFactory.wrapper();
