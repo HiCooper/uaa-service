@@ -16,6 +16,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @author Berry_Cooper.
+ * @date 2019/11/13 16:47
+ * fileName：AuthorizationServerConfig
+ * Use：安全配置
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -55,12 +65,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .formLogin()
+                .csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
                 .and()
                 .authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and().csrf().disable();
+                .anyRequest().authenticated()
+                .and()
+                .formLogin().and()
+                .httpBasic();
     }
 
     @Override
@@ -69,8 +82,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
                 .antMatchers(HttpMethod.OPTIONS, "/**")
                 .antMatchers("/app/**/*.{js,html}")
                 .antMatchers("/i18n/**")
-                .antMatchers("/content/**")
-                .antMatchers("/swagger-ui/index.html")
-                .antMatchers("/h2-console/**");
+                .antMatchers("/content/**");
     }
 }

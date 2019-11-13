@@ -11,15 +11,13 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * Created with IntelliJ IDEA.
  *
  * @author Berry_Cooper.
  * @date 2019/11/13 16:47
  * fileName：AuthorizationServerConfig
- * Use：
+ * Use：资源配置
  */
 @Configuration
 @EnableResourceServer
@@ -37,9 +35,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .exceptionHandling()
-                .authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
-                .and()
                 .csrf()
                 .disable()
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
@@ -62,7 +57,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/v2/api-docs/**").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/swagger.html").hasAuthority(AuthoritiesConstants.ADMIN);
+                .antMatchers("/swagger-ui.html").hasAuthority(AuthoritiesConstants.ADMIN)
+                .and()
+                .httpBasic();
     }
 
     @Override
