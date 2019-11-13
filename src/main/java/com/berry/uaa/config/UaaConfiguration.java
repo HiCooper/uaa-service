@@ -46,8 +46,6 @@ import java.util.Collection;
 @EnableAuthorizationServer
 public class UaaConfiguration extends AuthorizationServerConfigurerAdapter implements ApplicationContextAware {
 
-    private static final String DEMO_RESOURCE_ID = "order";
-
     private ApplicationContext applicationContext;
 
     private final UaaProperties uaaProperties;
@@ -107,13 +105,13 @@ public class UaaConfiguration extends AuthorizationServerConfigurerAdapter imple
                     .antMatchers("/api/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
                     .antMatchers("/api/**").authenticated()
                     .antMatchers("/v2/api-docs/**").permitAll()
-                    .antMatchers("/swagger-resources/configuration/ui").permitAll()
-                    .antMatchers("/swagger-ui/index.html").hasAuthority(AuthoritiesConstants.ADMIN);
+                    .antMatchers("/swagger-resources/**").permitAll()
+                    .antMatchers("/swagger.html").hasAuthority(AuthoritiesConstants.ADMIN);
         }
 
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-            resources.resourceId(DEMO_RESOURCE_ID).tokenStore(tokenStore);
+            resources.tokenStore(tokenStore);
         }
     }
 

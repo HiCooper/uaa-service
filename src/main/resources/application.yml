@@ -32,10 +32,11 @@ spring:
       thread-name-prefix: auth-scheduling-
       pool:
         size: 2
-  thymeleaf:
-    prefix: classpath:/static/
-    suffix: .html
-    cache: false
+
+security:
+  oauth2:
+    resource:
+      id: user-recource
 
 #mybatis
 mybatis-plus:
