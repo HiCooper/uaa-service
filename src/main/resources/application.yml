@@ -32,6 +32,10 @@ spring:
       thread-name-prefix: auth-scheduling-
       pool:
         size: 2
+  thymeleaf:
+    cache: false
+    prefix: classpath:/views/
+    suffix: .html
 
 security:
   oauth2:

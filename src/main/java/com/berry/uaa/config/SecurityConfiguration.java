@@ -1,5 +1,6 @@
 package com.berry.uaa.config;
 
+import com.berry.uaa.security.AuthoritiesConstants;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created with IntelliJ IDEA.
@@ -64,24 +63,29 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // url 安全配置
         http
-                .csrf().disable()
-                .exceptionHandling()
-                .authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
-                .and()
                 .authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().and()
-                .httpBasic();
+                .antMatchers("/auth/login", "/auth/authorize").permitAll()
+                .antMatchers("/swagger-ui.html").hasAuthority(AuthoritiesConstants.ADMIN)
+                .anyRequest().authenticated();
+
+        // 自定义表单登录
+        http
+                .formLogin().loginPage("/auth/login").loginProcessingUrl("/auth/authorize").permitAll()
+                .and().httpBasic();
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
+                // 安全放行url
                 .antMatchers(HttpMethod.OPTIONS, "/**")
                 .antMatchers("/app/**/*.{js,html}")
                 .antMatchers("/i18n/**")
+                .antMatchers("/v2/api-docs/**")
+                .antMatchers("/swagger-resources/**")
+                .antMatchers("/actuator/health")
                 .antMatchers("/content/**");
     }
 }
