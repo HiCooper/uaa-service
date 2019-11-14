@@ -66,13 +66,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
         // url 安全配置
         http
                 .authorizeRequests()
-                .antMatchers("/auth/login", "/auth/authorize").permitAll()
+                .antMatchers("/auth/login").permitAll()
                 .antMatchers("/swagger-ui.html").hasAuthority(AuthoritiesConstants.ADMIN)
                 .anyRequest().authenticated();
 
         // 自定义表单登录
         http
-                .formLogin().loginPage("/auth/login").loginProcessingUrl("/auth/authorize").permitAll()
+                .formLogin().loginPage("/auth/login").permitAll()
                 .and().httpBasic();
     }
 

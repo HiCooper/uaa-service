@@ -17,7 +17,7 @@ public class BaseMainController {
 
     @GetMapping("/auth/login")
     public String loginPage(Model model) {
-        model.addAttribute("loginProcessUrl", "/auth/authorize");
+        model.addAttribute("loginUrl", "/auth/login");
         return "base-login";
     }
 }
