@@ -1,6 +1,8 @@
 package com.berry.uaa.config;
 
 import com.berry.uaa.security.AuthoritiesConstants;
+import com.berry.uaa.security.FilterConfigurer;
+import com.berry.uaa.security.filter.TokenProvider;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
@@ -34,9 +36,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public SecurityConfiguration(UserDetailsService userDetailsService, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    private final TokenProvider tokenProvider;
+
+    public SecurityConfiguration(UserDetailsService userDetailsService,
+                                 AuthenticationManagerBuilder authenticationManagerBuilder,
+                                 TokenProvider tokenProvider) {
         this.userDetailsService = userDetailsService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -62,21 +69,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // url 安全配置
-        http
-                .authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
-                .antMatchers("/swagger-ui.html").hasAuthority(AuthoritiesConstants.ADMIN)
-                .anyRequest().authenticated();
-
-        // 自定义表单登录
-        http
-                .formLogin().loginPage("/auth/login").permitAll()
-                .and().httpBasic();
-    }
-
-    @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 // 安全放行url
@@ -87,5 +79,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
                 .antMatchers("/swagger-resources/**")
                 .antMatchers("/actuator/health")
                 .antMatchers("/content/**");
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf()
+                .disable()
+                // 自定义表单登录
+                .formLogin().loginPage("/auth/login").permitAll()
+                .and()
+                // url 安全配置
+                .authorizeRequests()
+                .antMatchers("/swagger-ui.html").hasAuthority(AuthoritiesConstants.ADMIN)
+                .anyRequest().authenticated()
+                .and()
+                .apply(securityConfigurerAdapter());
+    }
+
+    private FilterConfigurer securityConfigurerAdapter() {
+        return new FilterConfigurer(this.tokenProvider);
     }
 }

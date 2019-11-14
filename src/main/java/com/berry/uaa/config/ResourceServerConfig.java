@@ -34,8 +34,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 // 仅检测 任何以 api开头的 url资源作为保护对象，剩下的 交给 `SecurityConfiguration` 处理
-                .requestMatchers()
-                .antMatchers("/api/**")
+                .requestMatchers().antMatchers("/api/**")
                 .and()
                 // 禁用 csrf 检测
                 .csrf()
@@ -61,8 +60,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/api/account/reset-password/finish").permitAll()
                 .antMatchers("/api/management/health").permitAll()
                 .antMatchers("/api/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-                .antMatchers("/api/**").authenticated()
-                .and().httpBasic();
+                .antMatchers("/api/**").authenticated();
     }
 
     @Override
