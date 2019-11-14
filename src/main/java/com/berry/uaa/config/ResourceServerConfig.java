@@ -31,12 +31,16 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         this.corsFilter = corsFilter;
     }
 
+    /**
+     * 需要 oauth2 生成的 access_token 认证
+     * 未授权访问，返回 HttpStatus code = 401 `unAuthorized`
+     *
+     * @param http http
+     * @throws Exception Exception
+     */
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                // 仅检测 任何以 `/api/resources/**` 模式的 url资源作为保护对象，剩下的 交给 `SecurityConfiguration` 处理
-                // 需要 oauth2 生成的 access_token 认证
-                // 未授权访问，返回 HttpStatus code = 401 `unAuthorized`
                 .requestMatchers().antMatchers("/api/resources/**")
                 .and()
                 // 禁用 csrf 检测
@@ -59,7 +63,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     }
 
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+    public void configure(ResourceServerSecurityConfigurer resources) {
         resources.resourceId("order").tokenStore(tokenStore);
     }
 }

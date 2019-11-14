@@ -81,8 +81,8 @@ public final class Constants {
         WRITE_LIST.add("/v2/api-docs");
         WRITE_LIST.add("/webjars/.+");
         WRITE_LIST.add("/favicon.ico");
-        WRITE_LIST.add("/auth/login");
-        WRITE_LIST.add("/auth/register");
+        WRITE_LIST.add("/api/login");
+        WRITE_LIST.add("/api/register");
         WRITE_LIST.add(HEALTH_CHECK_URL);
         WRITE_LIST.add(ERROR_STATE_URL);
     }

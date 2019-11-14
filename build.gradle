@@ -30,11 +30,6 @@ dependencies {
     compile("ch.qos.logback:logback-classic:1.1.3")
     compile("ch.qos.logback:logback-access:1.1.3")
 
-    // swagger2
-    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-    compile group: 'io.springfox', name: 'springfox-staticdocs', version: '2.6.1'
-
     // 工具类公用包
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.9'

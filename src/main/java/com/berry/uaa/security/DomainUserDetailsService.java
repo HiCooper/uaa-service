@@ -1,6 +1,5 @@
 package com.berry.uaa.security;
 
-import com.berry.uaa.common.exceptions.BaseException;
 import com.berry.uaa.dao.entity.Role;
 import com.berry.uaa.dao.entity.User;
 import com.berry.uaa.dao.service.IUserDaoService;
@@ -59,7 +58,8 @@ public class DomainUserDetailsService implements UserDetailsService {
         }
         Set<Role> roleList = userDaoService.findRoleListByUserId(user.getId());
         if (roleList == null) {
-            throw new BaseException("403", "用户尚未分配角色");
+            log.error("用户尚未分配角色");
+            throw new NoRoleException("用户尚未分配角色");
         }
         List<GrantedAuthority> grantedAuthorities = roleList.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
