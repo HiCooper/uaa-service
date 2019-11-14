@@ -64,7 +64,6 @@
     授权后表明你已同意 <a href="#boot" style="color: #E9686B">OAUTH-BOOT 服务协议</a>
     <form method="post" action="/oauth/authorize">
         <input name="user_oauth_approval" value="true" type="hidden"/>
-        <input type="hidden" name="_csrf" th:value="${_csrf.getToken()}"/>
         <ul>
             <li>
                 <div class="form-group">
