@@ -2,7 +2,7 @@ package com.berry.uaa.api;
 
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,7 +21,7 @@ import java.util.Map;
 @SessionAttributes("authorizationRequest")
 public class BootGrantController {
 
-    @RequestMapping("/custom/confirm_access")
+    @GetMapping("/custom/confirm_access")
     public ModelAndView getAccessConfirmation(Map<String, Object> model, HttpServletRequest request) throws Exception {
 
         AuthorizationRequest authorizationRequest = (AuthorizationRequest) model.get("authorizationRequest");

@@ -109,7 +109,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .accessTokenConverter(jwtAccessTokenConverter())
                 .tokenEnhancer(tokenEnhancerChain)
                 .reuseRefreshTokens(false);
-        endpoints.pathMapping("/oauth/confirm_access","/custom/confirm_access");
+        endpoints.pathMapping("/oauth/confirm_access", "/custom/confirm_access");
     }
 
     @Override

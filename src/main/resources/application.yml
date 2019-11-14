@@ -7,7 +7,7 @@ server:
 
 spring:
   application:
-    name: auth-server
+    name: uaa-service
   profiles:
     active: dev
   mvc:
