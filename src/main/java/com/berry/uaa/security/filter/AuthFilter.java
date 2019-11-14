@@ -29,6 +29,8 @@ public class AuthFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION_HEADER = "authorization";
 
+    private static final String OPTIONS_REQUEST = "OPTIONS";
+
     private TokenProvider tokenProvider;
 
     public AuthFilter(TokenProvider tokenProvider) {
@@ -38,10 +40,10 @@ public class AuthFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-        logger.info("doFilter of AuthFilter...");
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String requestUrl = httpServletRequest.getRequestURI();
-        if (Constants.WRITE_LIST.stream().noneMatch(requestUrl::matches) && !"OPTIONS".equalsIgnoreCase(httpServletRequest.getMethod())) {
+        if (Constants.WRITE_LIST.stream().noneMatch(requestUrl::matches) && !OPTIONS_REQUEST.equalsIgnoreCase(httpServletRequest.getMethod())) {
+            logger.info("doFilter of AuthFilter...");
             String jwt = resolveToken(httpServletRequest);
             if (isNotBlank(jwt) && this.tokenProvider.validateToken(jwt)) {
                 // 验证jwt 设置授权信息到该线程上下文

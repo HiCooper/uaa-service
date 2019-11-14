@@ -1,4 +1,4 @@
-package com.berry.uaa.api;
+package com.berry.uaa.api.oauth2;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

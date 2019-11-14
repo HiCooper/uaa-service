@@ -1,7 +1,11 @@
 package com.berry.uaa.service;
 
+import com.berry.uaa.module.mo.LoginMo;
+import com.berry.uaa.module.mo.UserRegisterMo;
 import com.berry.uaa.module.vo.LoginSuccessVo;
 import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,10 +19,16 @@ public interface IUserService {
     /**
      * 用户登录
      *
-     * @param username   用户名
-     * @param password   密码
-     * @param rememberMe 是否记住
+     * @param loginMo
+     * @param response
      * @return
      */
-    ResponseEntity<LoginSuccessVo> login(String username, String password, Boolean rememberMe);
+    ResponseEntity<LoginSuccessVo> login(LoginMo loginMo, HttpServletResponse response);
+
+    /**
+     * 用户注册
+     *
+     * @param mo 请求参数
+     */
+    void register(UserRegisterMo mo);
 }

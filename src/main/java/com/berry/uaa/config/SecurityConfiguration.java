@@ -15,9 +15,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,12 +41,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     private final TokenProvider tokenProvider;
 
+    private final CorsFilter corsFilter;
+
     public SecurityConfiguration(UserDetailsService userDetailsService,
                                  AuthenticationManagerBuilder authenticationManagerBuilder,
-                                 TokenProvider tokenProvider) {
+                                 TokenProvider tokenProvider,
+                                 CorsFilter corsFilter) {
         this.userDetailsService = userDetailsService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.tokenProvider = tokenProvider;
+        this.corsFilter = corsFilter;
     }
 
     @Override
@@ -83,16 +90,33 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // 除 `/api/resources/**` 模式 外，其他url 路径安全配置，用户管理平台身份认证，filter 优先级 低于 资源服务
+        // 未授权访问，返回 HttpStatus code = 403 `Access Denied`
         http
                 .csrf()
                 .disable()
-                // 自定义表单登录
-                .formLogin().loginPage("/auth/login").permitAll()
+                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .and()
+                .headers()
+                .frameOptions()
+                .disable()
+                .and()
+                .sessionManagement()
+                // 无状态，不保存任何 session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 // url 安全配置
                 .authorizeRequests()
+                .antMatchers("/api/register").permitAll()
+                .antMatchers("/api/activate").permitAll()
+                .antMatchers("/api/authenticate").permitAll()
+                .antMatchers("/api/account/reset-password/init").permitAll()
+                .antMatchers("/api/account/reset-password/finish").permitAll()
+                .antMatchers("/api/management/health").permitAll()
+                .antMatchers("/api/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
+                .antMatchers("/api/**").authenticated()
                 .antMatchers("/swagger-ui.html").hasAuthority(AuthoritiesConstants.ADMIN)
-                .anyRequest().authenticated()
                 .and()
                 .apply(securityConfigurerAdapter());
     }
