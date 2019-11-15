@@ -179,7 +179,7 @@ html, body {
 /*.password-circle*/
 .styled-checkbox {
     position: absolute;
-    opacity: 0;
+    display: none;
     -webkit-transition: ease-in-out .3s;
     -moz-transition: ease-in-out .3s;
     -o-transition: ease-in-out .3s;
@@ -253,11 +253,6 @@ html, body {
 .centered {
     max-width: 620px;
     margin: auto;
-}
-
-.title {
-    text-align: center;
-    color: rgb(69, 113, 236);
 }
 
 .unstyled li:last-child {
@@ -407,5 +402,3 @@ html, body {
     border: 1px solid #1c7cf8;
     border-radius: 50%;
 }
-
-/*========================Thank you=================
