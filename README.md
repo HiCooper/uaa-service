@@ -10,19 +10,37 @@
 
 - 客户端认证 `client_credentials`
 ````
-http://localhost:8888/oauth/token?grant_type=client_credentials&scope=web-app&client_id=internal&client_secret=internal
+curl --location --request POST 'http://localhost:8888/oauth/token' \
+--header 'Cookie: JSESSIONID=3JoVsF0eFm6v6AqfP0wj_gnpS8ytaKDVZya7EQDQ' \
+--form 'grant_type=client_credentials' \
+--form 'scope=web-app' \
+--form 'client_id=internal' \
+--form 'client_secret=internal'
 ````
 
 - 密码认证 `password`
 
 ````
-http://localhost:8888/oauth/token?username=admin&password=123456&grant_type=password&scope=select&client_id=web_app&client_secret=internal
+curl --location --request POST 'http://localhost:8888/oauth/token' \
+--header 'Cookie: JSESSIONID=UzzwLzrDGicsZTRCRv2P4v5_pkVR8bw1ePkJWxW6' \
+--form 'username=admin' \
+--form 'password=123456' \
+--form 'grant_type=password' \
+--form 'scope=select' \
+--form 'client_id=web_app' \
+--form 'client_secret=internal'
 ````
 
 - 刷新token `refresh_token`
 
 ````
-http://localhost:8888/oauth/token?refresh_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib3JkZXIiXSwidXNlcl9uYW1lIjoiYWRtaW4iLCJzY29wZSI6WyJzZWxlY3QiXSwiYXRpIjoiZmQ0ZmQ0NzctMjIwNi00MDA1LWE3NmYtZDhiMjkxNDRlYmI2IiwiZXhwIjoxNTc0MDQ0OTI2LCJpYXQiOjE1NzM0NDAxMjYsImF1dGhvcml0aWVzIjpbIlJPTEVfQURNSU4iLCJST0xFX1VTRVIiXSwianRpIjoiYzFjYzlmMmQtMDBlNS00ZjFjLThhOWYtMDc4MDE3ZjA5YWQxIiwiY2xpZW50X2lkIjoid2ViX2FwcCJ9.VT0fsHMc3EJ7nSgkJrubG3jskrxb1sBNYHXOhEVhL1Iry_HKGp8r1yBMQbd2hOUnwGDU9ml5FttgGL3YN9o0COAxmJB2VqES3k7Inx81pC9d_4tyiYUS7COMdgKfDIWEfeYbaJJkozdI-ncWcHoEDI4tehNW_rKWYht_YoQvM5rGDFnQxbl4zjL-DDGQElpBor2gn7axazGA0-kwELY4IJsVxf_sZqrRLkF9AbP1qB4gxd2ggM3CoBlcdvc10XUnIivNae0YRopc5T1ai4SucQXQjDa9Kt8g_7HHnUqoDNZYParKzcz5Y5O8H4gsubHnuDTcilp5LdbsaIgnmYXPgg&grant_type=refresh_token&scope=select&client_id=web_app&client_secret=internal
+curl --location --request POST 'http://localhost:8888/oauth/token' \
+--header 'Cookie: JSESSIONID=81bu4dm_9itXWWzImxC-NHcTDJ1nIu3vAD07YhWe' \
+--form 'refresh_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib3JkZXIiXSwidXNlcl9uYW1lIjoiYWRtaW4iLCJzY29wZSI6WyJzZWxlY3QiXSwiYXRpIjoiYjQyOWI2ODctMTk5MC00YzZiLTg4MDgtMzE2ZTBlZDE1NWVlIiwiZXhwIjoxNjA0OTkyNjk1LCJpYXQiOjE2MDQ5OTIwOTUsImF1dGhvcml0aWVzIjpbIlJPTEVfQURNSU4iLCJST0xFX1VTRVIiXSwianRpIjoiMDdlMWRhODUtYjdhNC00ZjQ1LWJiZGEtOGZlOTEwNjQ2NGQ1IiwiY2xpZW50X2lkIjoid2ViX2FwcCJ9.fO4fGDkRAzyw9NG5AXJ8ZZkDYLCTQppkHLdYdo6mrxBOMztiNRqn37fG6F7sTAjy_WwDc8-51L5JJkZpTi8YHIpW-a5knIDspnYUL1Pun9kfm1sWUJzLn2qqX73ePKQn5Xf1S5emrH_UT1k0_e_nnI-7n6ZQSWAv3OhhbmLwtJFUf5SRQ6jeLJdX3nIQM7mu11wtLbDBegUeULBmclicGtOqBd5YCr8rzje-1iTbwu5Y3jYWUfYkOyO5LkJswY2gz4SdjtJmmWTeQDcRP6CVJ4aY_fwwKPmrXspQwLn1uWOwk5ZHGxOvdU6Pg23QmeNzCvXL91Pu1upt6-vKWiXSuQ' \
+--form 'grant_type=refresh_token' \
+--form 'scope=select' \
+--form 'client_id=web_app' \
+--form 'client_secret=internal'
 ````
 
 - 授权码认证
@@ -30,16 +48,22 @@ http://localhost:8888/oauth/token?refresh_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpX
 1. 获取 code
 
 ````
-# GET
+# 浏览器访问
 http://localhost:8888/oauth/authorize?response_type=code&client_id=au_code&redirect_uri=http://baidu.com&scope=select
 ````
 
-2. 授权后，重定向 url 将会 附带一个 参数 code=xxx, 如下示例：code=dmwJI4
+2. 授权后，重定向 url 将会 附带一个 参数 code=xxx, 如下示例：code=Qyyjp0
 根据 code 获取 access_token
 
 ````
-# POST
-http://localhost:8888/oauth/token?grant_type=authorization_code&scope=select&client_id=au_code&client_secret=internal&code=dmwJI4&redirect_uri=http://baidu.com
+curl --location --request POST 'http://localhost:8888/oauth/token' \
+--header 'Cookie: JSESSIONID=dBLnj2FO2qhSKwkmty9X-MyDcV9Jp-03CO1hNGGg' \
+--form 'grant_type=authorization_code' \
+--form 'scope=select' \
+--form 'client_id=au_code' \
+--form 'client_secret=internal' \
+--form 'code=Qyyjp0' \
+--form 'redirect_uri=http://baidu.com'
 ````
 返回示例：
 ````json
@@ -57,9 +81,9 @@ http://localhost:8888/oauth/token?grant_type=authorization_code&scope=select&cli
 - 使用获取的 access_token 获取受保护的  用户资源 '/api/resources/detail'
 
 ````bash
-# GET
-# head [{"key":"access_token","value":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6WyJ3ZWItYXBwIl0sImV4cCI6MTU3MzE3OTgxMywiaWF0IjoxNTczMTc4MDEzLCJhdXRob3JpdGllcyI6WyJST0xFX0FETUlOIl0sImp0aSI6ImMzZDU5ZDY4LThlNDEtNGEyYi05MTRhLTgzOGUzYzNjZGJkMiIsImNsaWVudF9pZCI6ImludGVybmFsIn0.Eg5v9kicy0CPwOGCqqNcpiITVScvhWv10SPusU9ntXirdTIMiXZAnXoQMPT0ja4JBtTYGJJzaAEBYZcoedXyg7yVxp1jVnWg4gSe3Kvl2IsXQdk0mSMkyLfk_DxIloahWlaP1_bhrDdcNYrQwAlk-qWaM4RsEDCpN-g3V1wPylwVcOjshH64c7BKocvTYzM3hNjs7J_Uk9BrZcPIVQyX5gyDNUM199FfW0ipKDFGHfncs4fGdpSj1G19MZ_zHVxQ81LQgeJ9iQITPVZs3F0hpESH0X4mtylbesxprS1BMTA-G01M1YqYAMwU6GKHsLNQzzwQBZCcZNHqFeklVIcU7Q","description":"","type":"text","enabled":true}]
-http://localhost:8888/api/resources/detail?username=admin
+curl --location --request GET 'http://localhost:8888/api/resources/detail?username=admin' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib3JkZXIiXSwic2NvcGUiOlsid2ViLWFwcCJdLCJleHAiOjE2MDQ5OTMwNzYsImlhdCI6MTYwNDk5Mjc3NiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9JTk5FUl9TRVJWSUNFIl0sImp0aSI6ImVkNjUzNzNmLWMwYmYtNGJjYS1iNTBjLWU0ODczNjIzZDY1NyIsImNsaWVudF9pZCI6ImludGVybmFsIn0.kag5iLeMXsf2-p7ffK601qP3VwLMhZfFHmGPy6vBVoh4hIN0IVFMrcTSQSxOcLPzLzusSX2gfIH-rVyV89BypSVDB07bewBED7Cd1Wpp5stbPKbUFj2oprz0ccOLX0Lwn0cG09RS8Xl2BdU6eScWHTQ_KGfkykd0kx9MddV7QGGy9o0d4A6vaFSsuy47p5YzvXZuXPJA5HaFxJ4U3wHAAac7VeL-AYhcN8Fe5icSxai6_5zDb5cDc6qEIodiwFWroLLUwKxWYAeGoJdgsywqMTY3XSabemt9PEzOiyJsF_LWbS0ewscTwtJwUgMR6sY2hhdJ2wyFd5BEsZsGcInqKw'
 ````
 
 返回用户信息示例：

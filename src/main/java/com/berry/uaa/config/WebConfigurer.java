@@ -1,6 +1,5 @@
 package com.berry.uaa.config;
 
-import io.github.jhipster.config.JHipsterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.server.MimeMappings;
@@ -18,17 +17,18 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.
+ *
+ * @author admin
  */
 @Configuration
 public class WebConfigurer implements WebServerFactoryCustomizer<WebServerFactory> {
 
     private final Logger log = LoggerFactory.getLogger(WebConfigurer.class);
 
+    private final GlobalProperties globalProperties;
 
-    private final JHipsterProperties jHipsterProperties;
-
-    public WebConfigurer(JHipsterProperties jHipsterProperties) {
-        this.jHipsterProperties = jHipsterProperties;
+    public WebConfigurer(GlobalProperties globalProperties) {
+        this.globalProperties = globalProperties;
     }
 
     /**
@@ -54,7 +54,7 @@ public class WebConfigurer implements WebServerFactoryCustomizer<WebServerFactor
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = jHipsterProperties.getCors();
+        CorsConfiguration config = globalProperties.getCors();
         if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
             log.debug("Registering CORS filter");
             source.registerCorsConfiguration("/api/**", config);
