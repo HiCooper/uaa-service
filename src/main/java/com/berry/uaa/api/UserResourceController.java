@@ -4,7 +4,6 @@ import com.berry.uaa.module.UserInfoVo;
 import com.berry.uaa.service.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +33,6 @@ public class UserResourceController {
      * @param username 用户名
      * @return userInfo
      */
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_INNER_SERVICE')")
     @GetMapping(value = "/detail")
     public ResponseEntity<UserInfoVo> detail(@RequestParam String username) {
         UserInfoVo userInfoVo = userService.detail(username);
