@@ -29,7 +29,6 @@ font-family: 'Poppins', sans-serif;
 body {
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
-    color: #a7a7a7;
     background: #fff;
     max-width: 1920px;
     margin: 0 auto;
@@ -264,9 +263,9 @@ html, body {
 /*.btn.signin_btn*/
 
 .btn.signin_btn, .btn.signin_btn:focus {
-    width: 620px;
+    width: 100%;
     padding: 0;
-    height: 60px;
+    height: 36px;
     background: #5a84fd;
     color: #fff;
     font-size: 14px;
@@ -401,4 +400,34 @@ html, body {
     color: #1c7cf8;
     border: 1px solid #1c7cf8;
     border-radius: 50%;
+}
+
+.login-page .header {
+    padding: 34px 24px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.login-page .app-main .auth-form {
+    width: 340px;
+    margin: 0 auto;
+}
+
+.login-page .app-main .auth-form .auth-form-header {
+    margin-bottom: 15px;
+    color: #24292e;
+    text-align: center;
+    text-shadow: none;
+    background-color: initial;
+    border: 0;
+}
+
+.login-page .app-main .auth-form .auth-form-body {
+    padding: 20px;
+    font-size: 14px;
+    background-color: #f6f8fa;
+    border: 1px solid #eaecef;
+    border-top: 0;
+    border-top: 1px solid #eaecef;
+    border-radius: 5px;
 }
